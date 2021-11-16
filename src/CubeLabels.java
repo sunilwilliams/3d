@@ -87,12 +87,16 @@ public class CubeLabels implements KeyListener {
 
                 square[lineGroup][lineNumber].setLocation(x + (int)(2 * (a + c)), y + (int)(2 * (b + d)));
                 square[lineGroup][lineNumber].setBackground(Color.BLACK);
+                square[lineGroup][lineNumber].setBackground(Color.BLACK);
                 square[lineGroup][lineNumber].setOpaque(true);
                 lineNumber++;
             }
         }
 
     }
+
+
+    //
 
     double angle = 0;
 

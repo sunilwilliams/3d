@@ -2,42 +2,34 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CubePanel extends JPanel {
-
     int mouseX;
     int mouseY;
 
-    int[] values;
+    int[][][] points;
 
-
-    public CubePanel(int[] in) {
-        values = in;
-
-
+    public CubePanel(int[][][] in) {
+        points = in;
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //System.out.println(values[0] + ", " + values[1]);
-
         g.setColor(Color.RED);
 
+        int rColor = 0;
+        int gColor = 0;
+        int bColor = 0;
 
-
-        for (double x = -250; x < 250; x = x + 1) {
-
-            for (double i = 0; i < 1; i = i + .1) {
-                g.fillRect((int)(x * 1) + 250, (int)(values[1] * Math.sin(values[0] * (x + i))) + 250, 1, 1);
+        for (int x = 0; x < points[0].length; x++) {
+            for (int y = 0; y < points.length; y++) {
+                if (x > 50)
+                    g.setColor(Color.BLACK);
+                else if (y > 50)
+                    g.setColor(Color.BLUE);
+                else
+                    g.setColor(Color.RED);
+                g.fillRect(points[y][x][0] * 1 + 200, points[y][x][1] * 1 + 200, 2, 2);
             }
-            //g.fillRect((int)(x * 1) + 250, (int)(values[1] * Math.sin((.1) * x)) + 250, 1, 1);
-
         }
-
-
-
-
-
     }
-
-
 }
