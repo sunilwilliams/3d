@@ -5,30 +5,40 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Cube implements MouseListener, KeyListener, Runnable {
+public class Points implements MouseListener, KeyListener, Runnable {
     JFrame frame = new JFrame("cube");
-    CubePanel panel;
+    PointsPanel panel;
     boolean running;
 
-    double[][][] points = new double[100][100][3];
+    double[][] points = {
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 100, 0},
+            {0, 0, 0, 100, 100, 0},
+            {0, 0, 0, 100, 0, 0}
+
+    };
     final int X = 0;
     final int Y = 1;
     final int Z = 2;
 
-    int[][][] finalMap = new int[points.length][points[0].length][2];
+    final int POS_X = 3;
+    final int POS_Y = 4;
+    final int POS_Z = 5;
+
+    int[][] finalMap = new int[points.length][2];
 
     public static void main(String[] args) {
-        new Cube();
+        new Points();
     }
 
 
-    public Cube() {
+    public Points() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
         frame.setLayout(new BorderLayout());
         frame.addKeyListener(this);
 
-        panel = new CubePanel(finalMap);
+        panel = new PointsPanel(finalMap);
         frame.add(panel, BorderLayout.CENTER);
         frame.repaint();
 
@@ -44,46 +54,39 @@ public class Cube implements MouseListener, KeyListener, Runnable {
 
 
     public void setX() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
-                double a = (Math.cos(angleX) * x);
-                double b = (Math.sin(angleX) * x);
-                double c = (Math.cos(angleX - (pi / 2)) * y);
-                double d = (Math.sin(angleX - (pi / 2)) * y);
+        for (int y = 0; y < points.length; y++) {
+            double a = (Math.cos(angleX) * points[y][POS_Y]);
+            double b = (Math.sin(angleX) * points[y][POS_Z]);
 
-                points[y][x][Y] = (a + c);
-                points[y][x][Z] = (b + d);
-            }
+            points[y][Y] = (a);
+            points[y][Z] = (b);
         }
+
     }
 
     public void setY() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
-                double a = (Math.cos(angleY) * x);
-                double b = (Math.sin(angleY) * x);
-                double c = (Math.cos(angleY - (pi / 2)) * y);
-                double d = (Math.sin(angleY - (pi / 2)) * y);
+        for (int y = 0; y < points.length; y++) {
+            double a = (Math.cos(angleY) * points[y][POS_Y]);
+            double b = (Math.sin(angleY) * points[y][POS_X]);
 
-                points[y][x][Z] = points[y][x][Y] + (a + c);
-                points[y][x][X] = (b + d);
-            }
+            points[y][Z] = points[y][Z] + (a);
+            points[y][X] = (b);
         }
+
+
 
     }
 
     public void setZ() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
-                double a = (Math.cos(angleZ) * x);
-                double b = (Math.sin(angleZ) * x);
-                double c = (Math.cos(angleZ - (pi / 2)) * y);
-                double d = (Math.sin(angleZ - (pi / 2)) * y);
+        for (int y = 0; y < points.length; y++) {
+            double a = (Math.cos(angleZ) * points[y][POS_X]); // calculating
+            double b = (Math.sin(angleZ) * points[y][POS_Y]);
 
-                points[y][x][X] = points[y][x][X] + (a + c);
-                points[y][x][Y] = points[y][x][Y] + (b + d);
-            }
+            points[y][X] = points[y][X] + (a);
+            points[y][Y] = points[y][Y] + (b);
         }
+
+
 
     }
 
@@ -99,12 +102,11 @@ public class Cube implements MouseListener, KeyListener, Runnable {
     }
 
     public void setFinal() {
-        for (int x = 0; x < points[0].length; x++) {
+
             for (int y = 0; y < points.length; y++) {
-                finalMap[y][x][X] = (int)(points[y][x][X]);
-                finalMap[y][x][Y] = (int)(points[y][x][Y]);
+                finalMap[y][X] = (int)(points[y][X]);
+                finalMap[y][Y] = (int)(points[y][Y]);
             }
-        }
 
         frame.repaint();
 
