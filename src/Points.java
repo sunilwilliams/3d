@@ -11,10 +11,10 @@ public class Points implements MouseListener, KeyListener, Runnable {
     boolean running;
 
     double[][] points = {
-            {0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 100, 0},
-            {0, 0, 0, 100, 100, 0},
-            {0, 0, 0, 100, 0, 0}
+            {0, 0, 0},
+            {0, 100, 0},
+            {100, 100, 0},
+            {100, 0, 0}
 
     };
     final int X = 0;
@@ -90,15 +90,60 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
     }
 
+    double corrector = 1;
+
+    public void rotateZ() {
+        for (int y = 0; y < points.length; y++) {
+            points[y][X] = ((points[y][X] * Math.cos(angleZ)) - (points[y][Y] * Math.sin(angleZ)) + (points[y][Z] * 0));
+            points[y][Y] = ((points[y][X] * Math.sin(angleZ)) + (points[y][Y] * Math.cos(angleZ)) + (points[y][Z] * 0));
+            points[y][Z] = ((points[y][X] * 0) - (points[y][Y] * 0) + (points[y][Z] * 1));
+        }
+    }
+
+    public void rotateX() {
+        for (int y = 0; y < points.length; y++) {
+            points[y][X] = ((points[y][X] * corrector) + (points[y][Y] * 0) + (points[y][Z] * 0));
+            points[y][Y] = ((points[y][X] * 0) + (points[y][Y] * Math.cos(angleX)) - (points[y][Z] * Math.sin(angleX)));
+            points[y][Z] = ((points[y][X] * 0) + (points[y][Y] * Math.sin(angleX)) + (points[y][Z] * Math.cos(angleX)));
+        }
+    }
+
+    public void rotateY() {
+        for (int y = 0; y < points.length; y++) {
+            points[y][X] = ((points[y][X] * Math.cos(angleY)) + (points[y][Y] * 0) + (points[y][Z] * Math.sin(angleY)));
+            points[y][Y] = ((points[y][X] * 0) + (points[y][Y] * corrector) + (points[y][Z] * 0));
+            points[y][Z] = (-(points[y][X] * Math.sin(angleY)) - (points[y][Y] * 0) + (points[y][Z] * Math.cos(angleY)));
+        }
+    }
+
+    public double sin(double angle) {
+        Math.sin()
+
+    }
+
+    public void setAll() {
+        for (int y = 0; y < points.length; y++) {
+            points[y][X] = ((points[y][X] * Math.cos(angleY)) + (points[y][Y] * 0) + (points[y][Z] * Math.sin(angleY)));
+            points[y][Y] = ((points[y][X] * 0) + (points[y][Y] * corrector) + (points[y][Z] * 0));
+            points[y][Z] = (-(points[y][X] * Math.sin(angleY)) - (points[y][Y] * 0) + (points[y][Z] * Math.cos(angleY)));
+        }
+
+
+    }
+
     public void set() {
         System.out.println(angleX);
         System.out.println(angleY);
         System.out.println(angleZ);
 
 
-        setX();
-        setY();
-        setZ();
+        //setX();
+        //setY();
+        //setZ();
+
+        //rotateZ();
+        rotateX();
+        //rotateY();
     }
 
     public void setFinal() {
@@ -115,39 +160,41 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
     @Override
     public void keyTyped(KeyEvent e) {
+        int precision = 12;
+
         switch (e.getKeyChar()) {
             case 'a': {
-                angleX = angleX - (pi / 12);
+                angleX = -(pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'd': {
-                angleX = angleX + (pi / 12);
+                angleX = (pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'w': {
-                angleY = angleY - (pi / 12);
+                angleY = -(pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 's': {
-                angleY = angleY + (pi / 12);
+                angleY = (pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'q': {
-                angleZ = angleZ - (pi / 12);
+                angleZ = -(pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'e': {
-                angleZ = angleZ + (pi / 12);
+                angleZ = (pi / precision);
                 set();
                 setFinal();
             }
