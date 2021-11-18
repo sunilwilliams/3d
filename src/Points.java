@@ -11,10 +11,14 @@ public class Points implements MouseListener, KeyListener, Runnable {
     boolean running;
 
     double[][] points = {
-            {0, 0, 0},
-            {0, 100, 0},
-            {100, 100, 0},
-            {100, 0, 0}
+            {0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 100, 0},
+            {0, 0, 0, 100, 100, 0},
+            {0, 0, 0, 100, 0, 0},
+            {0, 0, 0, 0, 0, 100},
+            {0, 0, 0, 0, 100, 100},
+            {0, 0, 0, 100, 100, 100},
+            {0, 0, 0, 100, 0, 100}
 
     };
     final int X = 0;
@@ -94,9 +98,9 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
     public void rotateZ() {
         for (int y = 0; y < points.length; y++) {
-            points[y][X] = ((points[y][X] * Math.cos(angleZ)) - (points[y][Y] * Math.sin(angleZ)) + (points[y][Z] * 0));
-            points[y][Y] = ((points[y][X] * Math.sin(angleZ)) + (points[y][Y] * Math.cos(angleZ)) + (points[y][Z] * 0));
-            points[y][Z] = ((points[y][X] * 0) - (points[y][Y] * 0) + (points[y][Z] * 1));
+            points[y][X] = (points[y][X] * cos(angleZ) - points[y][Y] * sin(angleZ) + points[y][Z] * 0);
+            points[y][Y] = (points[y][X] * sin(angleZ) + points[y][Y] * cos(angleZ) + points[y][Z] * 0);
+            points[y][Z] = (points[y][X] * 0 - points[y][Y] * 0 + points[y][Z] * 1);
         }
     }
 
@@ -117,15 +121,19 @@ public class Points implements MouseListener, KeyListener, Runnable {
     }
 
     public double sin(double angle) {
-        Math.sin()
-
+        double output = Math.sin(angle);
+        return output;
+    }
+    public double cos(double angle) {
+        double output = Math.cos(angle);
+        return output;
     }
 
     public void setAll() {
         for (int y = 0; y < points.length; y++) {
-            points[y][X] = ((points[y][X] * Math.cos(angleY)) + (points[y][Y] * 0) + (points[y][Z] * Math.sin(angleY)));
-            points[y][Y] = ((points[y][X] * 0) + (points[y][Y] * corrector) + (points[y][Z] * 0));
-            points[y][Z] = (-(points[y][X] * Math.sin(angleY)) - (points[y][Y] * 0) + (points[y][Z] * Math.cos(angleY)));
+            points[y][X] = (points[y][POS_X] * (cos(angleZ) * cos(angleY)) + points[y][POS_Y] * (cos(angleZ) * sin(angleY) * sin(angleX) - sin(angleZ) * cos(angleX)) + points[y][POS_Z] * (cos(angleZ) * sin(angleY) * cos(angleX) + sin(angleZ) * sin(angleX)));
+            points[y][Y] = (points[y][POS_X] * (sin(angleZ) * cos(angleY)) + points[y][POS_Y] *(sin(angleZ) * sin(angleY) * sin(angleX) + cos(angleZ) * cos(angleX)) + points[y][POS_Z] * (sin(angleZ) * sin(angleY) * cos(angleX) - cos(angleZ) * sin(angleX)));
+            points[y][Z] = (points[y][POS_X] * (-1 * sin(angleY)) + points[y][POS_Y] * (cos(angleY) * sin(angleX)) + points[y][POS_Z] * (cos(angleY) * cos(angleX)));
         }
 
 
@@ -141,8 +149,8 @@ public class Points implements MouseListener, KeyListener, Runnable {
         //setY();
         //setZ();
 
-        //rotateZ();
-        rotateX();
+        setAll();
+        //rotateX();
         //rotateY();
     }
 
@@ -163,38 +171,38 @@ public class Points implements MouseListener, KeyListener, Runnable {
         int precision = 12;
 
         switch (e.getKeyChar()) {
-            case 'a': {
-                angleX = -(pi / precision);
-                set();
-                setFinal();
-            }
-            break;
-            case 'd': {
-                angleX = (pi / precision);
-                set();
-                setFinal();
-            }
-            break;
             case 'w': {
-                angleY = -(pi / precision);
+                angleX = angleX - (pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 's': {
-                angleY = (pi / precision);
+                angleX = angleX + (pi / precision);
+                set();
+                setFinal();
+            }
+            break;
+            case 'd': {
+                angleY = angleY - (pi / precision);
+                set();
+                setFinal();
+            }
+            break;
+            case 'a': {
+                angleY = angleY + (pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'q': {
-                angleZ = -(pi / precision);
+                angleZ = angleZ - (pi / precision);
                 set();
                 setFinal();
             }
             break;
             case 'e': {
-                angleZ = (pi / precision);
+                angleZ = angleZ + (pi / precision);
                 set();
                 setFinal();
             }
