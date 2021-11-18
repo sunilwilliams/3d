@@ -10,17 +10,10 @@ public class Points implements MouseListener, KeyListener, Runnable {
     PointsPanel panel;
     boolean running;
 
-    double[][] points = {
-            {0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 100, 0},
-            {0, 0, 0, 100, 100, 0},
-            {0, 0, 0, 100, 0, 0},
-            {0, 0, 0, 0, 0, 100},
-            {0, 0, 0, 0, 100, 100},
-            {0, 0, 0, 100, 100, 100},
-            {0, 0, 0, 100, 0, 100}
+    double[][] points = new double[1331][7];
 
-    };
+
+
     final int X = 0;
     final int Y = 1;
     final int Z = 2;
@@ -45,6 +38,23 @@ public class Points implements MouseListener, KeyListener, Runnable {
         panel = new PointsPanel(finalMap);
         frame.add(panel, BorderLayout.CENTER);
         frame.repaint();
+
+        int pointCounter = 0;
+
+        for (int x = -50; x < 60; x = x + 10) {
+            for (int y = -50; y < 60; y = y + 10) {
+                for (int z = -50; z < 60; z = z + 10) {
+                    points[pointCounter][POS_X] = x;
+                    points[pointCounter][POS_Y] = y;
+                    points[pointCounter][POS_Z] = z;
+
+                    pointCounter++;
+                }
+            }
+        }
+
+
+
 
         frame.setVisible(true);
     }
@@ -152,14 +162,17 @@ public class Points implements MouseListener, KeyListener, Runnable {
         setAll();
         //rotateX();
         //rotateY();
+        //rotateZ();
     }
 
     public void setFinal() {
+        for (int y = 0; y < points.length; y++) {
+            double depth = (100 / points[y][Z]);
 
-            for (int y = 0; y < points.length; y++) {
-                finalMap[y][X] = (int)(points[y][X]);
-                finalMap[y][Y] = (int)(points[y][Y]);
-            }
+            finalMap[y][X] = (int)(points[y][X] / 1);
+            finalMap[y][Y] = (int)(points[y][Y] / 1);
+        }
+
 
         frame.repaint();
 
@@ -168,7 +181,7 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        int precision = 12;
+        int precision = 24;
 
         switch (e.getKeyChar()) {
             case 'w': {
