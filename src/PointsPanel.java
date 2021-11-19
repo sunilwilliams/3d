@@ -15,7 +15,6 @@ public class PointsPanel extends JPanel {
         super.paintComponent(g);
 
 
-
         int rColor = 0;
         int gColor = 0;
         int bColor = 0;
