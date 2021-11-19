@@ -22,6 +22,8 @@ public class Points implements MouseListener, KeyListener, Runnable {
     final int POS_Y = 4;
     final int POS_Z = 5;
 
+    final int VISIBLE = 6;
+
     int[][] finalMap = new int[points.length][2];
 
     public static void main(String[] args) {
@@ -41,11 +43,11 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
         int pointCounter = 0;
 
-        int radius = 50;
+        int radius = 10;
 
-        for (int x = -radius; x <= radius; x = x + 10) {
-            for (int y = -radius; y <= radius; y = y + 10) {
-                for (int z = -radius; z <= radius; z = z + 10) {
+        for (int x = 0; x <= radius; x = x + 1) {
+            for (int y = 0; y <= radius; y = y + 1) {
+                for (int z = 0; z <= radius; z = z + 1) {
                     //if (x == -radius || x == radius ||y == -radius || y == radius ||z == -radius || z == radius) {
                         points[pointCounter][POS_X] = x;
                         points[pointCounter][POS_Y] = y;
@@ -215,13 +217,17 @@ public class Points implements MouseListener, KeyListener, Runnable {
             for (int x = 0; x < frame.getWidth(); x++) {
                 for (int y = 0; y < frame.getHeight(); y++) {
                     if ((int)points[i][X] == x && (int)points[i][Y] == y) {
-
-
-
-
+                        if (points[i][Z] >= currentFront[x][y])
+                            currentFront[x][y] = i;
                     }
                 }
             }
+        }
+
+        for (int j = 0; j < points.length; j++) {
+            if (currentFront[(int)points[j][X]][(int)points[j][Y]] == j)
+                finalMap[j][X] = (int)(points[j][X] * 10 + 0);
+                finalMap[j][Y] = (int)(points[j][Y] * 10 + 0);
         }
     }
 
@@ -234,9 +240,10 @@ public class Points implements MouseListener, KeyListener, Runnable {
 
             System.out.println(points[y][Z]);
 
-            finalMap[y][X] = (int)(points[y][X] + 0);
-            finalMap[y][Y] = (int)(points[y][Y] + 0);
+
         }
+
+        pickFront();
 
 
         frame.repaint();
