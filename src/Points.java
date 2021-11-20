@@ -238,7 +238,7 @@ public class Points implements MouseListener, KeyListener, Runnable {
         for (int y = 0; y < points.length; y++) {
             double depth = (50 / points[y][Z]);
 
-            System.out.println(points[y][Z]);
+            //System.out.println(points[y][Z]);
 
 
         }
