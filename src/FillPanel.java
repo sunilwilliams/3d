@@ -16,43 +16,46 @@ public class FillPanel extends JPanel{
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-
         g.setColor(Color.RED);
+        for (int x = 0; x < 500; x++) {
+            for (int y = 0; y < 500; y++) {
+                //if (isInside(x, y))
+                    //g.fillRect(x + 250, y + 250, 5, 5);
+            }
+        }
 
-        for (int j = 0; j < 6; j++) {
-            int a = 1;
-            int b = 0;
+        int[][] values = new int[2][3];
 
-            if (j == 0) {a = 0; b = 1;}
-            if (j == 1) {a = 1; b = 2;}
-            if (j == 2) {a = 2; b = 0;}
-
-            for (int x = 0; x < 500; x++) {
-                if (points[a][X] < points[b][X]) {
-                    double m = ((points[a][Y] - points[b][Y]) / (points[a][X] - points[b][X]));
-                    if (x >= points[a][X] && x <= points[b][X]) {
-                        g.fillOval(x, (int) (m * (x - points[b][X]) + points[b][Y]), 10, 10);
-                    }
-                }
-
-                if (points[b][X] < points[a][X]) {
-                    double m = ((points[b][Y] - points[a][Y]) / (points[b][X] - points[a][X]));
-                    if (x >= points[b][X] && x <= points[a][X]) {
-                        g.fillOval(x, (int) (m * (x - points[a][X]) + points[a][Y]), 10, 10);
-                    }
-                }
-
-
+        for (int a = 0; a < 2; a++) {
+            for (int b = 0; b < 3; b++) {
+                values[a][b] = (int)points[a][b];
             }
         }
 
 
+        int[] xValues = {(int)points[0][X] + 250, (int)points[1][X] + 250, (int)points[2][X] + 250};
+        int[] yValues = {(int)points[0][Y] + 250, (int)points[1][Y] + 250, (int)points[2][Y] + 250};
 
-        for (int i = 0; i < points.length; i++) {
-            g.fillOval((int)points[i][X], (int)points[i][Y], 10, 10);
-        }
+        g.fillPolygon(xValues, yValues, 3);
 
+
+
+    }
+
+    public double area(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
+    }
+
+    public boolean isInside(double x, double y) {
+        double A = area(points[0][X], points[0][Y], points[1][X], points[1][Y], points[2][X], points[2][Y]);
+
+        double A1 = area(x, y, points[1][X], points[1][Y], points[2][X], points[2][Y]);
+
+        double A2 = area(points[0][X], points[0][Y], x, y, points[2][X], points[2][Y]);
+
+        double A3 = area(points[0][X], points[0][Y], points[1][X], points[1][Y], x, y);
+
+        return (A == A1 + A2 + A3);
     }
 
     public void extra(Graphics g) {

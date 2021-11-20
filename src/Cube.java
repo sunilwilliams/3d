@@ -42,46 +42,48 @@ public class Cube implements MouseListener, KeyListener, Runnable {
 
     double pi = Math.PI;
 
+    int equals = (-1 * points.length / 2);
+    int lessThan = (points.length / 2);
 
     public void setX() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
+        for (int x = equals; x < lessThan; x++) {
+            for (int y = equals; y < lessThan; y++) {
                 double a = (Math.cos(angleX) * x);
                 double b = (Math.sin(angleX) * x);
                 double c = (Math.cos(angleX - (pi / 2)) * y);
                 double d = (Math.sin(angleX - (pi / 2)) * y);
 
-                points[y][x][Y] = (a + c);
-                points[y][x][Z] = (b + d);
+                points[y + lessThan][x + lessThan][X] = (a + c);
+                points[y + lessThan][x + lessThan][Y] = (b + d);
             }
         }
     }
 
     public void setY() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
-                double a = (Math.cos(angleY) * x);
-                double b = (Math.sin(angleY) * x);
-                double c = (Math.cos(angleY - (pi / 2)) * y);
-                double d = (Math.sin(angleY - (pi / 2)) * y);
+        for (int y = equals; y < lessThan; y++) {
+            for (int z = equals; z < lessThan; z++) {
+                double a = (Math.cos(angleY) * y);
+                double b = (Math.sin(angleY) * y);
+                double c = (Math.cos(angleY - (pi / 2)) * z);
+                double d = (Math.sin(angleY - (pi / 2)) * z);
 
-                points[y][x][Z] = points[y][x][Y] + (a + c);
-                points[y][x][X] = (b + d);
+                points[z + lessThan][y + lessThan][Y] = points[z + lessThan][y + lessThan][Y] + (a + c);
+                points[z + lessThan][y + lessThan][Z] = (b + d);
             }
         }
 
     }
 
     public void setZ() {
-        for (int x = 0; x < points[0].length; x++) {
-            for (int y = 0; y < points.length; y++) {
-                double a = (Math.cos(angleZ) * x);
-                double b = (Math.sin(angleZ) * x);
-                double c = (Math.cos(angleZ - (pi / 2)) * y);
-                double d = (Math.sin(angleZ - (pi / 2)) * y);
+        for (int z = equals; z < lessThan; z++) {
+            for (int x = equals; x < lessThan; x++) {
+                double a = (Math.cos(angleZ) * z);
+                double b = (Math.sin(angleZ) * z);
+                double c = (Math.cos(angleZ - (pi / 2)) * x);
+                double d = (Math.sin(angleZ - (pi / 2)) * x);
 
-                points[y][x][X] = points[y][x][X] + (a + c);
-                points[y][x][Y] = points[y][x][Y] + (b + d);
+                points[x + lessThan][z + lessThan][Z] = (a + c);
+                points[x + lessThan][z + lessThan][X] = (b + d);
             }
         }
 
@@ -95,7 +97,7 @@ public class Cube implements MouseListener, KeyListener, Runnable {
 
         setX();
         setY();
-        setZ();
+        //setZ();
     }
 
     public void setFinal() {
