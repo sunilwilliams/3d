@@ -181,9 +181,9 @@ public class Points implements MouseListener, KeyListener, Runnable {
             points[y][POS_Y] = points[y][POS_Y] + moveY;
             points[y][POS_Z] = points[y][POS_Z] + moveZ;
 
-            points[y][X] = (points[y][POS_X] * (cos(angleZ) * cos(angleY)) + points[y][POS_Y] * (cos(angleZ) * sin(angleY) * sin(angleX) - sin(angleZ) * cos(angleX)) + points[y][POS_Z] * (cos(angleZ) * sin(angleY) * cos(angleX) + sin(angleZ) * sin(angleX)));
-            points[y][Y] = (points[y][POS_X] * (sin(angleZ) * cos(angleY)) + points[y][POS_Y] *(sin(angleZ) * sin(angleY) * sin(angleX) + cos(angleZ) * cos(angleX)) + points[y][POS_Z] * (sin(angleZ) * sin(angleY) * cos(angleX) - cos(angleZ) * sin(angleX)));
-            points[y][Z] = (points[y][POS_X] * (-1 * sin(angleY)) + points[y][POS_Y] * (cos(angleY) * sin(angleX)) + points[y][POS_Z] * (cos(angleY) * cos(angleX)));
+            points[y][X] = (points[y][X] * (cos(angleZ) * cos(angleY)) + points[y][Y] * (cos(angleZ) * sin(angleY) * sin(angleX) - sin(angleZ) * cos(angleX)) + points[y][Z] * (cos(angleZ) * sin(angleY) * cos(angleX) + sin(angleZ) * sin(angleX)));
+            points[y][Y] = (points[y][X] * (sin(angleZ) * cos(angleY)) + points[y][Y] *(sin(angleZ) * sin(angleY) * sin(angleX) + cos(angleZ) * cos(angleX)) + points[y][Z] * (sin(angleZ) * sin(angleY) * cos(angleX) - cos(angleZ) * sin(angleX)));
+            points[y][Z] = (points[y][X] * (-1 * sin(angleY)) + points[y][Y] * (cos(angleY) * sin(angleX)) + points[y][Z] * (cos(angleY) * cos(angleX)));
         }
 
 
@@ -235,15 +235,16 @@ public class Points implements MouseListener, KeyListener, Runnable {
     double vanishY = 250;
 
     public void setFinal() {
-        for (int y = 0; y < points.length; y++) {
-            double depth = (50 / points[y][Z]);
+        for (int j = 0; j < points.length; j++) {
+            double depth = (50 / points[j][Z]);
 
             //System.out.println(points[y][Z]);
-
+            finalMap[j][X] = (int)(points[j][X] * 10 + 0);
+            finalMap[j][Y] = (int)(points[j][Y] * 10 + 0);
 
         }
 
-        pickFront();
+        //pickFront();
 
 
         frame.repaint();
@@ -265,6 +266,12 @@ public class Points implements MouseListener, KeyListener, Runnable {
     @Override
     public void keyPressed(KeyEvent e) {
         int precision = 24;
+
+        for (int i = 0; i < 3; i++) {
+            angleX = 0;
+            angleY = 0;
+            angleZ = 0;
+        }
 
         switch (e.getKeyChar()) {
             case 'w': {
