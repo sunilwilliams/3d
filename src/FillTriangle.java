@@ -29,7 +29,7 @@ public class FillTriangle implements KeyListener {
         frame.setLayout(new BorderLayout());
         frame.addKeyListener(this);
 
-        panel = new FillPanel(pointsLocation);
+        panel = new FillPanel(points);
         frame.add(panel, BorderLayout.CENTER);
         frame.repaint();
 
@@ -37,23 +37,17 @@ public class FillTriangle implements KeyListener {
     }
 
     double[] rotate = new double[3];
-
-    int[] rotateValues = new int[1000];
-    int rotateNum = 0;
-    final int X0 = 0;
-    final int X1 = 1;
-    final int Y0 = 2;
-    final int Y1 = 3;
-    final int Z0 = 4;
-    final int Z1 = 5;
     double interval = (Math.PI / 24);
 
     public void rotate() {
         double corrector = 1;
-        for (int j = 0; j < rotateNum; j++) {
+        for (int j = 0; j < 3; j++) {
             int a = 0; int b = 0;
 
-            if (rotateValues[rotateNum] == X0) {a = 1; b = 2;}
+            if (j == 0) {a = 1; b = 2;
+
+
+            }
             if (j == 1) {a = 2; b = 0;}
             if (j == 2) {a = 0; b = 1;}
 
@@ -61,10 +55,10 @@ public class FillTriangle implements KeyListener {
                 points[i][a] = points[i][a] * Math.cos(rotate[j]) * corrector + points[i][b] * -Math.sin(rotate[j]) * corrector;
                 points[i][b] = points[i][a] * Math.sin(rotate[j]) * corrector + points[i][b] * Math.cos(rotate[j]) * corrector;
             }
-        }
-    }
 
-    public void rotateAngle () {
+            System.out.println(Math.cos(rotate[j]));
+        }
+
 
     }
 
@@ -73,31 +67,25 @@ public class FillTriangle implements KeyListener {
 
         double corrector = 1.003;
 
-        //for (int i = 0; i < 3; i++) {rotate[i] = 0;}
+        for (int i = 0; i < 3; i++) {rotate[i] = 0;}
 
         if (e.getKeyChar() == 'a') {
             rotate[1] = rotate[1] - interval;
-            for (int i = 0; i < 3; i++) { points[i][Z] = points[i][Z] * corrector; points[i][X] = points[i][X] * corrector;}
         }
         if (e.getKeyChar() == 'd') {
             rotate[1] = rotate[1] + interval;
-            for (int i = 0; i < 3; i++) { points[i][Z] = points[i][Z] * corrector; points[i][X] = points[i][X] * corrector;}
         }
         if (e.getKeyChar() == 'w') {
             rotate[0] = rotate[0] - interval;
-            for (int i = 0; i < 3; i++) { points[i][Y] = points[i][Y] * corrector; points[i][Z] = points[i][Z] * corrector;}
         }
         if (e.getKeyChar() == 's') {
             rotate[0] = rotate[0] + interval;
-            for (int i = 0; i < 3; i++) { points[i][Y] = points[i][Y] * corrector; points[i][Z] = points[i][Z] * corrector;}
         }
         if (e.getKeyChar() == 'q') {
             rotate[2] = rotate[2] - interval;
-            for (int i = 0; i < 3; i++) { points[i][X] = points[i][X] * corrector; points[i][Y] = points[i][Y] * corrector;}
         }
         if (e.getKeyChar() == 'e') {
             rotate[2] = rotate[2] + interval;
-            for (int i = 0; i < 3; i++) { points[i][X] = points[i][X] * corrector; points[i][Y] = points[i][Y] * corrector;}
         }
 
         for (int i = 0; i < 3; i++) {
