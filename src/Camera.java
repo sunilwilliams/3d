@@ -8,15 +8,25 @@ public class Camera implements KeyListener {
     CameraPanel panel;
 
     double[][] points = {
-            {-100, 50, 50},
-            {30, 20, 50},
-            {100, 200, 50},
-            {500, 100, 50}
+            {-50, 200, 50},
+            {-100, -50, 50},
+            {200, -100, 50},
+            {-500, -500, 75},
+            {500, -500, 75},
+            {50, 500, 75},
     };
 
     double[][][] tris = {
-            {points[0], points[1], points[2]},
-            //{points[1], points[2], points[3]}
+            {points[0], points[1], points[2], {0}},
+            {points[3], points[4], points[5], {1}}
+    };
+
+
+    Color[] colors = {
+            Color.RED,
+            Color.YELLOW,
+            Color.GREEN,
+            Color.BLUE
     };
 
     double[] cameraPos = {0, 0, 0};
@@ -24,6 +34,8 @@ public class Camera implements KeyListener {
     Color[][] pixelColors = new Color[500][500];
 
     double[][] pointsLocation = new double[3][3];
+
+    double[] cameraAngle = {0, 0, (Math.PI / 2)};
 
     final int X = 0;
     final int Y = 1;
@@ -68,18 +80,25 @@ public class Camera implements KeyListener {
         System.out.println(points[0][X]);
     }
 
-    double fov = Math.PI;
-    double[] rayAngleIntervals = {
-            (fov / frame.getWidth()), //angle interval x
-            (fov / frame.getHeight()) //angle interval y
-    };
+    double fov = (Math.PI / 2);
+
 
     public void sendRays() {
-        for (int x = 0; x < frame.getWidth(); x++) {
-            for (int y = 0; y < frame.getHeight(); y++) {
-                double[] origin = {cameraPos[X] + x, cameraPos[Y] + y, cameraPos[Z]};
-                double[] slope = {0, 0, 1};
-                pixelColors[y][x] = detectSurface(origin, slope);
+        double[] rayAngleIntervals = {
+                (fov / frame.getWidth()), //angle interval x
+                (fov / frame.getHeight()) //angle interval y
+        };
+
+        for (int x = (-frame.getWidth() / 2); x < (frame.getWidth() / 2); x++) {
+            for (int y = (-frame.getHeight() / 2); y < (frame.getHeight() / 2); y++) {
+                double[] origin = {cameraPos[X], cameraPos[Y], cameraPos[Z]};
+
+                double angleX = (cameraAngle[X] + (x * rayAngleIntervals[X]));
+                double angleY = (cameraAngle[Y] + (y * rayAngleIntervals[Y]));
+                double angleZ = cameraAngle[Z];
+
+                double[] slope = {Math.sin(angleX), Math.sin(angleY), Math.sin(angleZ)};
+                pixelColors[y + (frame.getHeight() / 2)][x + (frame.getWidth() / 2)] = detectSurface(origin, slope);
             }
         }
     }
@@ -95,25 +114,21 @@ public class Camera implements KeyListener {
 
         while (!hasHit) {
             for (int i = 0; i < tris.length; i++) {
-                if ((int)pos[Z] == 50) {
+                if ((int)pos[Z] == tris[i][2][Z]) {
                     if (isInside((int)pos[X], (int)pos[Y], (int)i)) {
-                        color = Color.RED;
+                        color = colors[(int)tris[i][3][0]];
                         hasHit = true;
                     }
                 }
-
-                //System.out.println(counter);
             }
 
 
             //System.out.println(pos[X]);
 
-            pos[X] = pos[X] + slope[X];
-            pos[Y] = pos[Y] + slope[Y];
-            pos[Z] = pos[Z] + slope[Z];
+            for (int i = 0; i < 3; i++) pos[i] = pos[i] + slope[i];
 
             counter++;
-            if (counter == 100) hasHit = true; // if it checks 100 times, the loop stops
+            if (counter == 500) hasHit = true; // if it checks 100 times, the loop stops
         }
         return color;
     }
@@ -158,22 +173,35 @@ public class Camera implements KeyListener {
     }
 
 
-    double[] cameraAngle = new double[3];
+
 
     @Override
     public void keyTyped(KeyEvent e) {
+        double interval = (Math.PI / 12);
 
-        if (e.getKeyChar() == 'w') {cameraPos[Z]++;}
-        if (e.getKeyChar() == 'a') {cameraPos[X]--;}
-        if (e.getKeyChar() == 's') {cameraPos[Z]--;}
-        if (e.getKeyChar() == 'd') {cameraPos[X]++;}
+        if (e.getKeyChar() == 'a') {cameraPos[X] = cameraPos[X] - 10;}
+        if (e.getKeyChar() == 'd') {cameraPos[X] = cameraPos[X] + 10;}
+
+        if (e.getKeyChar() == 'q') {cameraPos[Y] = cameraPos[Y] - 10;}
+        if (e.getKeyChar() == 'e') {cameraPos[Y] = cameraPos[Y] + 10;}
+
+        if (e.getKeyChar() == 's') {cameraPos[Z] = cameraPos[Z] - 10;}
+        if (e.getKeyChar() == 'w') {cameraPos[Z] = cameraPos[Z] + 10;}
+
+        if (e.getKeyCode() == KeyEvent.VK_UP) {cameraAngle[X] = cameraAngle[X] - interval;}
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {cameraAngle[X] = cameraAngle[X] + interval;}
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {cameraAngle[Y] = cameraAngle[Y] - interval;}
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {cameraAngle[Y] = cameraAngle[Y] + interval;}
+
         for (int i = 0; i < 3; i++) {
             if (cameraAngle[i] > (Math.PI - .01) && cameraAngle[i] < (Math.PI + .01)) {cameraAngle[i] = 0;}
         }
 
         //checkIfInView();
-        System.out.println(cameraPos[X]);
-        System.out.println(cameraPos[Z]);
+        //System.out.println(cameraPos[X]);
+        //System.out.println(cameraPos[Y]);
+        //System.out.println(cameraPos[Z]);
         sendRays();
         frame.repaint();
     }
