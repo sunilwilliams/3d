@@ -8,20 +8,32 @@ public class RasterizePanel extends JPanel {
     final int Y = 1;
     final int Z = 2;
 
+    final int POINTS = 0;
+    final int COLOR = 1;
+    final int POINT_1 = 2;
+    final int POINT_2 = 3;
+    final int POINT_3 = 4;
+    final int POINT_4 = 5;
+    final int POINT_5 = 6;
+
     int frameWidth = 500;
     int frameHeight = 500;
 
-    int[][][] screenTris;
+    int[][][] screenPolys;
+
+    int opacity = 50;
 
     Color[] colors = {
-            Color.RED,
-            Color.YELLOW,
-            Color.GREEN,
-            Color.BLUE
+            new Color(255, 255, 255, opacity),
+            new Color(255, 125, 0, opacity),
+            new Color(255, 255, 0, opacity),
+            new Color(0, 255, 0, opacity),
+            new Color(0, 0, 255, opacity),
+            new Color(255, 0, 255, opacity),
     };
 
-    public RasterizePanel(int[][] in) {
-        points = in;
+    public RasterizePanel(int[][][] in) {
+        screenPolys = in;
 
     }
 
@@ -30,28 +42,26 @@ public class RasterizePanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.RED);
 
+        for (int i = 0; i < screenPolys.length; i++) {
 
-        for (int i = 0; i < points.length; i++) {
-            g.fillOval(points[i][X], points[i][Y], 10, 10);
         }
 
 
-        int[] xValues = {points[0][X], points[1][X], points[2][X]};
-        int[] yValues = {points[0][Y], points[1][Y], points[2][Y]};
-        //g.fillPolygon(xValues, yValues, 3);
+        for (int i = 0; i < screenPolys.length; i++) {
+            int[] xValues = new int[100];
+            int[] yValues = new int[100];
+            for (int j = 0; j < screenPolys[i][POINTS][0]; j++) {
+                //g.fillOval(screenPolys[i][j + 2][X], screenPolys[i][j + 2][Y], 10, 10);
 
-        int[] xValues1 = {points[3][X], points[4][X], points[5][X]};
-        int[] yValues1 = {points[3][Y], points[4][Y], points[5][Y]};
-        //g.fillPolygon(xValues1, yValues1, 3);
 
-        //for (int i = 0; i < polys.length; i++) {
-            //for (int j = 0; j < (polys.length - 1); j++) {
-                //xValues[j] = polys[i][j][X];
-                //yValues[j] = polys[i][j][Y];
-            //}
-            //g.setColor(colors[(int)polys[i][polys[i].length - 1][0]]);
-            //g.fillPolygon(xValues, yValues, polys[i].length - 1);
-        //}
+                xValues[j] = screenPolys[i][j + 2][X];
+                yValues[j] = frameHeight - screenPolys[i][j + 2][Y];
+            }
+            g.setColor(colors[screenPolys[i][COLOR][0]]);
+            g.fillPolygon(xValues, yValues, screenPolys[i][POINTS][0]);
+        }
+
+
 
     }
 }

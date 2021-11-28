@@ -64,7 +64,7 @@ public class Rasterize implements KeyListener {
             }
         }
 
-        panel = new RasterizePanel(finalPointCoords);
+        panel = new RasterizePanel(screenTris);
         frame.add(panel, BorderLayout.CENTER);
         frame.repaint();
 
