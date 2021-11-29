@@ -18,14 +18,14 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             {50, 50, -50},
             {50, -50, -50},
             {-50, -50, 50},
-            {-50, 100, 50},
+            {-50, 50, 50},
             {50, 50, 50},
             {50, -50, 50},
 
             {100, -50, 100},
             {100, -50, 200},
-            {200, -50, 100},
             {200, -50, 200},
+            {200, -50, 100},
             {150, 50, 150},
     };
 
@@ -46,12 +46,12 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             {3, 4, 7, 3, 6},
             {3, 5, 4, 0, 7},
 
-            //{3, 1, 8, 9, 10},
-            //{3, 2, 9, 10, 11},
-            //{3, 3, 8, 9, 12},
-            //{3, 4, 9, 11, 12},
-            //{3, 5, 10, 11, 12},
-            //{3, 0, 11, 8, 12},
+            {3, 1, 8, 9, 10},
+            {3, 2, 9, 10, 11},
+            {3, 3, 8, 9, 12},
+            {3, 4, 9, 10, 12},
+            {3, 5, 10, 11, 12},
+            {3, 0, 11, 8, 12},
     };
 
     double[][][] screenPolys = new double[100][10][3];
@@ -119,32 +119,8 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     double yFov = (Math.PI / 512);
     int near = 1;
     int far = 100;
-    int xPixelsInFrame = 500;
-    int yPixelsInFrame = 500;
-
-    public double[] CheckOutI(double[][] values) {
-        int leftBoundary = -100;
-        int rightBoundary = 100;
-        int upBoundary = -100;
-        int downBoundary = 100;
-
-        double[] output = new double[3];
-
-        for (int i = 0; i < values.length; i++) {
-            int inside1;
-            int inside2;
-            if (values[i][X] > rightBoundary) {
-                if (i == 0) {inside1 = 1; inside2 = 2;}
-                if (i == 1) {inside1 = 2; inside2 = 0;}
-                if (i == 2) {inside1 = 0; inside2 = 1;}
-            }
-
-
-        }
-
-
-        return output;
-    }
+    int xPixelsInFrame = 150;
+    int yPixelsInFrame = 150;
 
     public void transformPoints() {
         for (int i = 0; i < points.length; i++) {
@@ -233,13 +209,15 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     }
 
     public void goThroughZBuffer() {
-        for (int i = near; i < 100; i++) {
+        for (int i = near; i < 10000; i++) {
             for (int j = 0; j < screenPolys.length; j++) {
                 if ((int)screenPolys[j][Z_AVERAGE][0] == i) {
+                    //System.out.println(i);
+                    double[][] poly = screenPolys[j];
                     for (int x = 0; x < screenPixels[0].length; x++) {
                         for (int y = 0; y < screenPixels.length; y++) {
-                            if (screenPixels[x][y] == Color.LIGHT_GRAY && isInside(x, y, screenPolys[i][POINT_1][X], screenPolys[i][POINT_1][Y], screenPolys[i][POINT_2][X], screenPolys[i][POINT_2][Y], screenPolys[i][POINT_3][X], screenPolys[i][POINT_3][Y])) {
-                                screenPixels[x][y] = colors[(int)screenPolys[j][COLOR][0]];
+                            if (screenPixels[x][y] == Color.LIGHT_GRAY && isInside(x, y, poly[POINT_1][X], poly[POINT_1][Y], poly[POINT_2][X], poly[POINT_2][Y], poly[POINT_3][X], poly[POINT_3][Y])) {
+                                screenPixels[x][y] = colors[(int)poly[COLOR][0]];
                                 //System.out.println(screenPixels[x][y]);
                             }
                         }
@@ -247,71 +225,6 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
                 }
             }
         }
-    }
-
-    public void goThroughEverything() {
-
-    }
-
-    public double[] modelTransform(double x, double y, double z) {
-        x = x - cameraPos[X];
-        y = y - cameraPos[Y];
-        z = z - cameraPos[Z];
-
-        double angleX = -cameraAngle[X];
-        double angleY = -cameraAngle[Y];
-        double angleZ = -cameraAngle[Z];
-
-        double cosX = Math.cos(angleX);
-        double cosY = Math.cos(angleY);
-        double cosZ = Math.cos(angleZ);
-
-        double sinX = Math.sin(angleX);
-        double sinY = Math.sin(angleY);
-        double sinZ = Math.sin(angleZ);
-
-        double[] d = new double[3];
-
-        d[Y] = cosY * ((sinZ * y) + (cosZ * x)) - (sinY * z);
-        d[X] = sinX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) + (cosX * (cosZ * y - sinZ * x));
-        d[Z] = cosX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) - (sinX * (cosZ * y - sinZ * x));
-
-        x = d[X];
-        y = d[Y];
-        z = d[Z];
-
-        return d;
-    }
-
-    public double[] outputMerge(double x, double y, double z) {
-        /////////////// projection transformation
-        x = x * (frame.getWidth() / xPixelsInFrame);
-        y = y * (frame.getHeight() / yPixelsInFrame);
-
-        double w = -z;
-        x = (x / Math.tan(xFov / 2));
-        y = -(y / Math.tan(yFov / 2));
-        z = ((z * ((far + near) / (far - near))) + ((2 * far * near) / (far - near)));
-
-        x = (x / w);
-        y = (y / w);
-        //z = (z / w);
-
-        double[] output = new double[3];
-        output[X] = (int) x + (frame.getWidth() / 2);
-        output[Y] = (int) y + (frame.getHeight() / 2);
-        output[Z] = (int) z;
-
-        return output;
-    }
-
-
-
-
-
-    public void setScreenPixels() {
-
-
     }
 
     @Override
@@ -371,27 +284,27 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     boolean rotateDown;
 
     public void input() {
-        double move = 2;
+        double move = 5;
 
-        if (forward) {
+        if (backward) {
             cameraPos[X] = cameraPos[X] + move * Math.cos(-cameraAngle[X] - (Math.PI / 2));
             cameraPos[Z] = cameraPos[Z] + move * Math.sin(-cameraAngle[X] - (Math.PI / 2));
         }
-        if (backward) {
+        if (forward) {
             cameraPos[X] = cameraPos[X] - move * Math.cos(-cameraAngle[X] - (Math.PI / 2));
             cameraPos[Z] = cameraPos[Z] - move * Math.sin(-cameraAngle[X] - (Math.PI / 2));
         }
-        if (down) {
+        if (up) {
             cameraPos[Y] = cameraPos[Y] + move;
         }
-        if (up) {
+        if (down) {
             cameraPos[Y] = cameraPos[Y] - move;
         }
-        if (left) {
+        if (right) {
             cameraPos[X] = cameraPos[X] - move * Math.cos(-cameraAngle[X]);
             cameraPos[Z] = cameraPos[Z] - move * Math.sin(-cameraAngle[X]);
         }
-        if (right) {
+        if (left) {
             cameraPos[X] = cameraPos[X] + move * Math.cos(-cameraAngle[X]);
             cameraPos[Z] = cameraPos[Z] + move * Math.sin(-cameraAngle[X]);
         }
@@ -455,9 +368,9 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
                 }
             }
 
-            //hideMouse();
-            //correctMousePosition();
-            //cameraAngle[X] = cameraAngle[X] - (getPointerInfo().getLocation().getX() - lastMouseX) / 512;
+            hideMouse();
+            correctMousePosition();
+            cameraAngle[X] = cameraAngle[X] - (getPointerInfo().getLocation().getX() - lastMouseX) / 512;
             lastMouseX = getPointerInfo().getLocation().getX();
 
             input();
