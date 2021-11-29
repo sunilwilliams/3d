@@ -42,13 +42,14 @@ public class PixelsPanel extends JPanel {
         g.setColor(Color.RED);
 
         for (int x = 0; x < pixels[0].length; x++) {
-            for (int y = pixels.length; y > 0; y--) {
+            for (int y = pixels.length - 1; y > -1; y--) {
                 g.setColor(pixels[x][y]);
+                //System.out.println("pixels[x][y]");
                 g.fillRect(x, y, 1, 1);
             }
         }
 
-
+        //System.out.println(pixels.length);
 
     }
 }
