@@ -29,7 +29,7 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             {150, 50, 150},
     };
 
-    double[][] processedPoints = new double[points.length][points[0].length];
+    double[][] processedPoints = new double[points.length][4];
 
     int[][] polys = {
             {3, 0, 0, 1, 2},
@@ -63,6 +63,7 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             Color.GREEN,
             Color.BLUE,
             Color.MAGENTA,
+            null,
     };
 
     double[] cameraPos = {0, 0, 0};
@@ -71,12 +72,13 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
 
     int[][] finalPointCoords = new int[100][3];
 
-    Color[][] screenPixels = new Color[500][500];
+    Color[][] screenPixels = new Color[320][200];
 
     final int X = 0;
     final int Y = 1;
     final int Z = 2;
     final int W = 3;
+    final int BEHIND = 3;
 
     final int POINTS = 0;
     final int Z_AVERAGE = 0;
@@ -95,7 +97,7 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
 
     public RasterizeTest() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(640, 400);
         frame.setLayout(new BorderLayout());
         frame.addKeyListener(this);
 
@@ -117,8 +119,8 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     double interval = (2 * Math.PI / 200);
     double xFov = (Math.PI / 512);
     double yFov = (Math.PI / 512);
-    int near = 1;
-    int far = 100;
+    int near = 10;
+    int far = 10000;
     int xPixelsInFrame = 150;
     int yPixelsInFrame = 150;
 
@@ -128,6 +130,7 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             processedPoints[i][X] = transformedPoint[X];
             processedPoints[i][Y] = transformedPoint[Y];
             processedPoints[i][Z] = transformedPoint[Z];
+            processedPoints[i][BEHIND] = transformedPoint[BEHIND];
         }
     }
 
@@ -151,7 +154,6 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
         double sinZ = Math.sin(angleZ);
 
         double[] d = new double[3];
-
         d[Y] = cosY * ((sinZ * y) + (cosZ * x)) - (sinY * z);
         d[X] = sinX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) + (cosX * (cosZ * y - sinZ * x));
         d[Z] = cosX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) - (sinX * (cosZ * y - sinZ * x));
@@ -161,8 +163,13 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
         z = d[Z];
 
         /////////////// projection transformation
-        x = x * (frame.getWidth() / xPixelsInFrame);
-        y = y * (frame.getHeight() / yPixelsInFrame);
+        //x = x * (frame.getWidth() / xPixelsInFrame);
+        //y = y * (frame.getHeight() / yPixelsInFrame);
+
+        double[] output = new double[4];
+
+        if (z < 0)
+            output[BEHIND] = 1;
 
         double w = -z;
         x = (x / Math.tan(xFov / 2));
@@ -173,9 +180,9 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
         y = (y / w);
         //z = (z / w);
 
-        double[] output = new double[3];
-        output[X] = (int) x + (frame.getWidth() / 2);
-        output[Y] = (int) y + (frame.getHeight() / 2);
+
+        output[X] = (int) x + (screenPixels.length / 2);
+        output[Y] = (int) y + (screenPixels[0].length / 2);
         output[Z] = (int) z;
 
         return output;
@@ -189,6 +196,12 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
             screenPolys[i][POINT_3] = processedPoints[polys[i][POINT_3]];
 
             screenPolys[i][Z_AVERAGE][0] = (screenPolys[i][POINT_1][Z] + screenPolys[i][POINT_2][Z] + screenPolys[i][POINT_3][Z]);
+
+            if (screenPolys[i][POINT_1][BEHIND] == 1 && screenPolys[i][POINT_2][BEHIND] == 1 && screenPolys[i][POINT_3][BEHIND] == 1) {
+                //screenPolys[i][COLOR][0] = 6;
+                //System.out.println(i);
+            }
+
         }
     }
 
@@ -209,14 +222,15 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     }
 
     public void goThroughZBuffer() {
-        for (int i = near; i < 10000; i++) {
+        for (int i = 300; i < 10000; i++) {
             for (int j = 0; j < screenPolys.length; j++) {
                 if ((int)screenPolys[j][Z_AVERAGE][0] == i) {
                     //System.out.println(i);
                     double[][] poly = screenPolys[j];
-                    for (int x = 0; x < screenPixels[0].length; x++) {
-                        for (int y = 0; y < screenPixels.length; y++) {
+                    for (int x = 0; x < screenPixels.length; x++) {
+                        for (int y = 0; y < screenPixels[0].length; y++) {
                             if (screenPixels[x][y] == Color.LIGHT_GRAY && isInside(x, y, poly[POINT_1][X], poly[POINT_1][Y], poly[POINT_2][X], poly[POINT_2][Y], poly[POINT_3][X], poly[POINT_3][Y])) {
+                                //System.out.println(i > 100);
                                 screenPixels[x][y] = colors[(int)poly[COLOR][0]];
                                 //System.out.println(screenPixels[x][y]);
                             }
@@ -362,8 +376,8 @@ public class RasterizeTest implements KeyListener, MouseMotionListener, Runnable
     public void run() {
 
         while (running) {
-            for (int x = 0; x < screenPixels[0].length; x++) {
-                for (int y = 0; y < screenPixels.length; y++) {
+            for (int x = 0; x < screenPixels.length; x++) {
+                for (int y = 0; y < screenPixels[0].length; y++) {
                     screenPixels[x][y] = Color.LIGHT_GRAY;
                 }
             }

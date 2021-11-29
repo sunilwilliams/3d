@@ -16,8 +16,8 @@ public class PixelsPanel extends JPanel {
     final int POINT_4 = 5;
     final int POINT_5 = 6;
 
-    int frameWidth = 500;
-    int frameHeight = 500;
+    int frameWidth = 320;
+    int frameHeight = 200;
 
     int[][][] screenPolys;
 
@@ -41,11 +41,11 @@ public class PixelsPanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.RED);
 
-        for (int x = 0; x < pixels[0].length; x++) {
-            for (int y = pixels.length - 1; y > -1; y--) {
+        for (int x = 0; x < pixels.length; x++) {
+            for (int y = pixels[0].length - 1; y > -1; y--) {
                 g.setColor(pixels[x][y]);
                 //System.out.println("pixels[x][y]");
-                g.fillRect(x, y, 1, 1);
+                g.fillRect(x * 2, y * 2, 2, 2);
             }
         }
 
