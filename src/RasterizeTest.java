@@ -159,6 +159,8 @@ public class RasterizeTest implements KeyListener, Runnable {
             d[X] = sinX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) + (cosX * (cosZ * y - sinZ * x));
             d[Z] = cosX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) - (sinX * (cosZ * y - sinZ * x));
 
+            d = rotateByVector(x, y, z);
+
             x = d[X];
             y = d[Y];
             z = d[Z];
@@ -185,6 +187,46 @@ public class RasterizeTest implements KeyListener, Runnable {
         output[Z] = (int) z;
 
         return output;
+    }
+
+    double[][] orientationVectors = {
+            {1, 0, 0},
+            {0, 1, 0},
+            {0, 0, 1}
+    };
+
+    public void changeOrientation() {
+        double angleX = -cameraAngle[X];
+        double angleY = -cameraAngle[Y];
+        double angleZ = -cameraAngle[Z];
+
+        double cosX = Math.cos(angleX);
+        double cosY = Math.cos(angleY);
+        double cosZ = Math.cos(angleZ);
+
+        double sinX = Math.sin(angleX);
+        double sinY = Math.sin(angleY);
+        double sinZ = Math.sin(angleZ);
+
+        for (int i = 0; i < 3; i++) {
+            double x = orientationVectors[i][X];
+            double y = orientationVectors[i][Y];
+            double z = orientationVectors[i][Z];
+
+            orientationVectors[i][Y] = cosY * ((sinZ * y) + (cosZ * x)) - (sinY * z);
+            orientationVectors[i][X] = sinX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) + (cosX * (cosZ * y - sinZ * x));
+            orientationVectors[i][Z] = cosX * ((cosY * z) + (sinY * (sinZ * y + cosZ * x))) - (sinX * (cosZ * y - sinZ * x));
+        }
+    }
+
+    public double[] rotateByVector(double x, double y, double z) {
+        double[] outputs = new double[3];
+
+        for (int i = 0; i < 3; i++) {
+            outputs[i] = x * orientationVectors[i][X] + y * orientationVectors[i][Y] + z * orientationVectors[i][Z];
+        }
+
+        return outputs;
     }
 
     public void addPolys() {
@@ -317,10 +359,10 @@ public class RasterizeTest implements KeyListener, Runnable {
             side = side + speed;
         }
         if (rotateLeft) {
-            cameraAngle[X] = cameraAngle[X] + interval;
+            cameraAngle[X] = interval;
         }
         if (rotateRight) {
-            cameraAngle[X] = cameraAngle[X] - interval;
+            cameraAngle[X] = -interval;
         }
         if (rotateUp) {
             //cameraAngle[Y] = cameraAngle[Y] + interval;
@@ -409,7 +451,7 @@ public class RasterizeTest implements KeyListener, Runnable {
 
             hideMouse();
             correctMousePosition();
-            cameraAngle[X] = cameraAngle[X] - (getPointerInfo().getLocation().getX() - lastMouseX) / 512;
+            //cameraAngle[X] = cameraAngle[X] - (getPointerInfo().getLocation().getX() - lastMouseX) / 512;
             lastMouseX = getPointerInfo().getLocation().getX();
 
             //cameraAngle[Y] = cameraAngle[Y] - (getPointerInfo().getLocation().getY() - lastMouseY) / 512;
@@ -417,6 +459,8 @@ public class RasterizeTest implements KeyListener, Runnable {
 
             input();
             move();
+
+            changeOrientation();
 
             transformPoints();
             addPolys();
