@@ -181,9 +181,14 @@ public class Points implements MouseListener, KeyListener, Runnable {
             points[y][POS_Y] = points[y][POS_Y] + moveY;
             points[y][POS_Z] = points[y][POS_Z] + moveZ;
 
-            points[y][X] = (points[y][X] * (cos(angleZ) * cos(angleY)) + points[y][Y] * (cos(angleZ) * sin(angleY) * sin(angleX) - sin(angleZ) * cos(angleX)) + points[y][Z] * (cos(angleZ) * sin(angleY) * cos(angleX) + sin(angleZ) * sin(angleX)));
-            points[y][Y] = (points[y][X] * (sin(angleZ) * cos(angleY)) + points[y][Y] *(sin(angleZ) * sin(angleY) * sin(angleX) + cos(angleZ) * cos(angleX)) + points[y][Z] * (sin(angleZ) * sin(angleY) * cos(angleX) - cos(angleZ) * sin(angleX)));
-            points[y][Z] = (points[y][X] * (-1 * sin(angleY)) + points[y][Y] * (cos(angleY) * sin(angleX)) + points[y][Z] * (cos(angleY) * cos(angleX)));
+            double[] d = new double[3];
+            d[X] = (points[y][X] * (cos(angleZ) * cos(angleY)) + points[y][Y] * (cos(angleZ) * sin(angleY) * sin(angleX) - sin(angleZ) * cos(angleX)) + points[y][Z] * (cos(angleZ) * sin(angleY) * cos(angleX) + sin(angleZ) * sin(angleX)));
+            d[Y] = (points[y][X] * (sin(angleZ) * cos(angleY)) + points[y][Y] *(sin(angleZ) * sin(angleY) * sin(angleX) + cos(angleZ) * cos(angleX)) + points[y][Z] * (sin(angleZ) * sin(angleY) * cos(angleX) - cos(angleZ) * sin(angleX)));
+            d[Z] = (points[y][X] * (-1 * sin(angleY)) + points[y][Y] * (cos(angleY) * sin(angleX)) + points[y][Z] * (cos(angleY) * cos(angleX)));
+
+            points[y][X] = d[X];
+            points[y][Y] = d[Y];
+            points[y][Z] = d[Z];
         }
 
 
