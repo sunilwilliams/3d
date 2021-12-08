@@ -56,6 +56,13 @@ public class DrawPolys {
                                 if (i > 500)
                                     brightness = brightness - (i - 500);
 
+                                double redLight = 0;
+
+                                //System.out.println(brightness);
+
+                                if (brightness > 0)
+                                    redLight = brightness * 10;
+
                                 int[] color = {(int)(brightness + colors[(int)poly[COLOR][0]][R]), (int)(brightness + colors[(int)poly[COLOR][0]][G]), (int)(brightness + colors[(int)poly[COLOR][0]][B])};
 
                                 for (int k = 0; k < color.length; k++) {

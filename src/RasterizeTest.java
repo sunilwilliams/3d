@@ -139,7 +139,7 @@ public class RasterizeTest implements KeyListener, Runnable {
     }
 
     double interval = (2 * Math.PI / 200);
-    int near = 100;
+    int near = 75;
 
     public void addPolys() {
         for (int i = 0; i < polys.length; i++) {
